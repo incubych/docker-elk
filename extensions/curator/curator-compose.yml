@@ -1,15 +1,13 @@
-version: '3.2'
-
 services:
   curator:
     build:
       context: extensions/curator/
+    init: true
+    volumes:
+      - ./extensions/curator/config/curator.yml:/.curator/curator.yml:ro,Z
+      - ./extensions/curator/config/delete_log_files_curator.yml:/.curator/delete_log_files_curator.yml:ro,Z
     environment:
-      ELASTICSEARCH_HOST: elasticsearch
-      CRON: 0 0 * * *
-      CONFIG_FILE: /usr/share/curator/config/curator.yml
-      COMMAND: /usr/share/curator/config/delete_log_files_curator.yml
-      UNIT_COUNT: 2
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
     networks:
       - elk
     depends_on:

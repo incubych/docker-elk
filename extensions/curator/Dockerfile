@@ -1,13 +1,9 @@
-FROM alpine:3.8
+FROM untergeek/curator:8.0.21
 
-ENV CURATOR_VERSION=5.8.1
+USER root
 
-RUN apk --update add --no-cache tini python py-pip \
-  && pip install elasticsearch-curator==${CURATOR_VERSION}
+RUN >>/var/spool/cron/crontabs/nobody \
+    echo '* * * * * /curator/curator /.curator/delete_log_files_curator.yml'
 
-COPY entrypoint.sh /
-
-WORKDIR /usr/share/curator
-COPY config ./config
-
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["crond"]
+CMD ["-f", "-d8"]
